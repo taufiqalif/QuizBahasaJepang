@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Bahasa Jepang</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Quiz Section -->
+    <div class="quiz-section">
+      <h1>Quiz Bahasa Jepang</h1>
+
+      <div id="status">
+        <p>Score: <span id="score">0</span></p>
+        <p>Nyawa: <span id="lives">3</span></p>
+        <p>Timer: <span id="time">10</span></p>
+        <p>Level: <span id="difficulty-label">PEMULA</span></p>
+      </div>
+
+      <div id="question">Klik tombol untuk mulai!</div>
+      <div id="options" class="options"></div>
+
+      <button id="start-btn" onclick="startGame()">Mulai Quiz</button>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="leaderboard-section">
+      <h2>Leaderboard</h2>
+      <ul id="leaderboard">
+        <li>Belum ada skor!</li>
+      </ul>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Sounds -->
+    <audio id="sound-correct" src="assets/sounds/sound-correct.mp3"></audio>
+    <audio id="sound-wrong" src="assets/sounds/sound-wrong.mp3"></audio>
+    <audio id="sound-gameover" src="assets/sounds/sound-gameover.mp3"></audio>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+
+</html>
