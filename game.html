@@ -5,46 +5,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Bahasa Jepang</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Style -->
+  <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-  <script>
-    const username = localStorage.getItem('username');
-    if (!username) {
-      alert('Silakan login dulu!');
-      window.location.href = 'index.html';
-    }
-  </script>
-
 </head>
 
 <body>
   <div class="container">
-    <p>Selamat datang, <span id="username-display"></span>!</p>
-
-    <!-- Quiz Section -->
-    <div class="quiz-section">
-      <h1>Quiz Bahasa Jepang</h1>
-
-      <div id="status">
-        <p>Score: <span id="score">0</span></p>
-        <p>Nyawa: <span id="lives">3</span></p>
-        <p>Timer: <span id="time">10</span></p>
-        <p>Level: <span id="difficulty-label">PEMULA</span></p>
-      </div>
-
-      <div id="question">Klik tombol untuk mulai!</div>
-      <div id="options" class="options"></div>
-
-      <button id="start-btn" onclick="startGame()">Mulai Quiz</button>
+    <!-- Greeting -->
+    <div class="welcome">
+      <p>Selamat datang, <span id="username-display">User</span>!</p>
+      <button id="logout-btn" onclick="logout()">Logout</button>
     </div>
 
-    <!-- Leaderboard Section -->
-    <div class="leaderboard-section">
-      <h2>Leaderboard</h2>
-      <ul id="leaderboard">
-        <li>Belum ada skor!</li>
-      </ul>
+    <!-- Main Content (Quiz + Leaderboard) -->
+    <div class="main-content">
+
+      <!-- Quiz Section -->
+      <div class="quiz-section">
+        <h1>Quiz Bahasa Jepang</h1>
+
+        <div id="status">
+          <p>Score: <span id="score">0</span></p>
+          <p>Nyawa: <span id="lives">3</span></p>
+          <p>Timer: <span id="time">10</span></p>
+          <p>Level: <span id="difficulty-label">PEMULA</span></p>
+        </div>
+
+        <div id="question" class="question-box">Klik tombol untuk mulai!</div>
+        <div id="options" class="options"></div>
+
+        <button id="start-btn" onclick="startGame()">Mulai Quiz</button>
+      </div>
+
+      <!-- Leaderboard Section -->
+      <div class="leaderboard-section">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard">
+          <li>Belum ada skor!</li>
+        </ul>
+      </div>
     </div>
 
     <!-- Toast Notification -->
@@ -56,7 +57,26 @@
     <audio id="sound-gameover" src="assets/sounds/sound-gameover.mp3"></audio>
   </div>
 
+  <!-- Script -->
   <script src="js/script.js"></script>
+  <script>
+    const username = localStorage.getItem('username');
+    if (!username) {
+      window.location.href = 'index.html';
+    } else {
+      document.getElementById('username-display').textContent = username;
+    }
+
+    function logout() {
+      localStorage.removeItem('username');
+      window.location.href = 'index.html';
+    }
+
+    // Placeholder buat function startGame()
+    function startGame() {
+      alert("Fungsi startGame belum diisi!");
+    }
+  </script>
 </body>
 
 </html>

@@ -5,19 +5,27 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents("php://input"), true);
 $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
+$role = $data['role'] ?? 'user'; // default user jika tidak diisi
 
 if (!$username || !$password) {
-  echo json_encode(['error' => 'Username dan password wajib diisi!']);
-  exit;
+    echo json_encode(['error' => 'Semua kolom wajib diisi!']);
+    exit;
 }
 
-$username = mysqli_real_escape_string($conn, $username);
-$hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+// Validasi role yang benar
+$valid_roles = ['admin', 'user'];
+if (!in_array($role, $valid_roles)) {
+    echo json_encode(['error' => 'Role tidak valid!']);
+    exit;
+}
 
-$query = "INSERT INTO users (username, password) VALUES ('$username', '$hashedPassword')";
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-if (mysqli_query($conn, $query)) {
-  echo json_encode(['message' => 'Registrasi berhasil!']);
+$stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+$stmt->bind_param("sss", $username, $hashed_password, $role);
+
+if ($stmt->execute()) {
+    echo json_encode(['message' => 'Registrasi berhasil!']);
 } else {
-  echo json_encode(['error' => 'Username sudah digunakan!']);
+    echo json_encode(['error' => 'Username sudah digunakan!']);
 }

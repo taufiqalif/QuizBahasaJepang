@@ -56,3 +56,30 @@ function showNotification(message, type = 'info') {
     notif.remove();
   }, 2500);
 }
+
+
+function register() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const role = document.getElementById('role').value;  // ambil role dari select
+  
+  if (!username || !password) {
+    showNotification('Isi semua kolom!', 'error');
+    return;
+  }
+
+  fetch('api/register.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password, role })  // kirim role ke backend
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.message) {
+      showNotification(result.message, 'success');
+      window.location.href = 'index.html';
+    } else {
+      showNotification(result.error, 'error');
+    }
+  });
+}

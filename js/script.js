@@ -12,7 +12,10 @@ let questionsAnswered = 0;
 // =======================
 const username = localStorage.getItem('username');
 if (!username || username.length < 3 || username.length > 20) {
-  window.location.href = 'index.html'; // Redirect kalau username invalid
+  alert('Silakan login dulu!');
+  window.location.href = 'index.html';
+} else {
+  document.getElementById('username-display').innerText = username;
 }
 
 // =======================
@@ -22,6 +25,7 @@ function startGame() {
   score = 0;
   lives = 3;
   questionsAnswered = 0;
+
   updateStatus();
   document.getElementById('start-btn').style.display = 'none';
   loadQuestion();
@@ -69,11 +73,11 @@ function loadQuestion() {
         optionsDiv.appendChild(btn);
       });
 
-      // Mulai timer dengan waktu sesuai difficulty
+      // Mulai timer
       startTimer();
     })
     .catch(err => {
-      console.error(err);
+      console.error('Error load soal:', err);
       showNotification('Gagal mengambil pertanyaan!', 'error');
     });
 }
@@ -117,7 +121,6 @@ function afterAnswerCheck() {
 // =======================
 function getTimeByDifficulty() {
   const diff = getDifficultyByProgress();
-
   switch (diff) {
     case 'pemula': return 12;
     case 'mudah': return 10;
@@ -186,7 +189,7 @@ function submitScore(username, skor) {
       }
     })
     .catch(err => {
-      console.error(err);
+      console.error('Error simpan skor:', err);
       showNotification('Gagal menyimpan skor!', 'error');
     });
 }
@@ -213,7 +216,7 @@ function loadLeaderboard() {
       });
     })
     .catch(err => {
-      console.error(err);
+      console.error('Error load leaderboard:', err);
       showNotification('Gagal memuat leaderboard!', 'error');
     });
 }
@@ -249,7 +252,7 @@ function updateTimerDisplay() {
 }
 
 // =======================
-// Main Fungsi Sound (Pastikan Ada Elemen Audio di HTML-nya!)
+// Main Fungsi Sound
 // =======================
 function playSound(type) {
   const sound = document.getElementById(`sound-${type}`);
@@ -264,7 +267,6 @@ function playSound(type) {
 // =======================
 function getScoreByDifficulty() {
   const diff = getDifficultyByProgress();
-
   switch (diff) {
     case 'pemula': return 10;
     case 'mudah': return 20;
@@ -280,9 +282,15 @@ function getScoreByDifficulty() {
 window.onload = () => {
   loadLeaderboard();
 
-  // Pastikan username valid minimal di sisi klien
+  // Validasi username lagi biar aman
   if (!username || username.length < 3) {
     showNotification('Username tidak valid', 'error');
     setTimeout(() => window.location.href = 'index.html', 2000);
   }
 };
+
+
+function logout() {
+  localStorage.removeItem('username'); // hapus username dari localStorage
+  window.location.href = 'index.html'; // arahkan ke halaman login
+}

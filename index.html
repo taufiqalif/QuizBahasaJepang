@@ -21,17 +21,30 @@
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
 
-      const res = await fetch('api/login.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
+      if (!username || !password) {
+        alert('Username dan Password wajib diisi!');
+        return;
+      }
 
-      const result = await res.json();
-      alert(result.message || result.error);
-      if (result.message) {
-        localStorage.setItem('username', username);
-        window.location.href = 'game.html';
+      try {
+        const res = await fetch('api/login.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const result = await res.json();
+
+        if (result.message) {
+          alert(result.message);
+          localStorage.setItem('username', username);
+          window.location.href = 'game.html';
+        } else {
+          alert(result.error || 'Login gagal!');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan, coba lagi nanti.');
       }
     }
   </script>
