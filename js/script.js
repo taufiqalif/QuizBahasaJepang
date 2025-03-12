@@ -58,10 +58,8 @@ function loadQuestion() {
         return;
       }
 
-      // Tampilkan pertanyaan
       document.getElementById('question').innerText = data.pertanyaan;
 
-      // Buat tombol opsi jawaban
       const optionsDiv = document.getElementById('options');
       optionsDiv.innerHTML = '';
 
@@ -73,7 +71,6 @@ function loadQuestion() {
         optionsDiv.appendChild(btn);
       });
 
-      // Mulai timer
       startTimer();
     })
     .catch(err => {
@@ -162,9 +159,10 @@ function startTimer() {
 // =======================
 function gameOver() {
   showNotification(`Game Over! Skor kamu: ${score}`, 'error');
-  submitScore(username, score);
 
-  // Reset UI
+  const level = getDifficultyByProgress();
+  submitScore(username, score, level);
+
   document.getElementById('start-btn').style.display = 'block';
   document.getElementById('question').innerText = 'Klik tombol untuk mulai!';
   document.getElementById('options').innerHTML = '';
@@ -173,11 +171,11 @@ function gameOver() {
 // =======================
 // Submit Skor ke Server
 // =======================
-function submitScore(username, skor) {
+function submitScore(username, skor, level) {
   fetch('api/save_score.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, skor })
+    body: JSON.stringify({ username, skor, level })
   })
     .then(res => res.json())
     .then(result => {
@@ -185,12 +183,12 @@ function submitScore(username, skor) {
         showNotification(result.message, 'success');
         loadLeaderboard();
       } else {
-        showNotification('Skor gagal disimpan!', 'error');
+        showNotification(result.error || 'Gagal simpan skor!', 'error');
       }
     })
     .catch(err => {
-      console.error('Error simpan skor:', err);
-      showNotification('Gagal menyimpan skor!', 'error');
+      console.error(err);
+      showNotification('Terjadi kesalahan!', 'error');
     });
 }
 
@@ -210,9 +208,9 @@ function loadLeaderboard() {
       }
 
       data.forEach((entry, index) => {
-        const li = document.createElement('li');
-        li.innerText = `${index + 1}. ${entry.username} - ${entry.skor}`;
-        list.appendChild(li);
+        list.innerHTML += `
+          <li>${index + 1}. ${entry.username} - ${entry.total_skor} pts - Rank: ${entry.rank}</li>
+        `;
       });
     })
     .catch(err => {
@@ -235,7 +233,7 @@ function showNotification(message, type = 'info') {
 }
 
 // =======================
-// Update Status UI (Score & Lives)
+// Update Status UI
 // =======================
 function updateStatus() {
   document.getElementById('score').innerText = score;
@@ -282,15 +280,16 @@ function getScoreByDifficulty() {
 window.onload = () => {
   loadLeaderboard();
 
-  // Validasi username lagi biar aman
   if (!username || username.length < 3) {
     showNotification('Username tidak valid', 'error');
     setTimeout(() => window.location.href = 'index.html', 2000);
   }
 };
 
-
+// =======================
+// Logout
+// =======================
 function logout() {
-  localStorage.removeItem('username'); // hapus username dari localStorage
-  window.location.href = 'index.html'; // arahkan ke halaman login
+  localStorage.removeItem('username');
+  window.location.href = 'index.html';
 }
