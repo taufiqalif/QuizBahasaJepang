@@ -3,25 +3,25 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Login - Quiz Jepang</title>
+  <title>Register - Quiz Jepang</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
   <div class="login-container">
-    <h1>Login ke Quiz Jepang</h1>
+    <h1>Register Akun Baru</h1>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p><a href="register.html">Belum punya akun? Daftar!</a></p>
+    <button onclick="register()">Daftar</button>
+    <p><a href="index.html">Sudah punya akun? Login!</a></p>
   </div>
 
   <script>
-    async function login() {
+    async function register() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
 
-      const res = await fetch('api/login.php', {
+      const res = await fetch('api/register.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -30,8 +30,7 @@
       const result = await res.json();
       alert(result.message || result.error);
       if (result.message) {
-        localStorage.setItem('username', username);
-        window.location.href = 'game.html';
+        window.location.href = 'index.html';
       }
     }
   </script>

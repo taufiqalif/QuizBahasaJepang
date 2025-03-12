@@ -1,2 +1,4 @@
 # Abaikan folder sql dan semua isinya
 sql/
+
+/sql/

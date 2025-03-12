@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - Quiz Jepang</title>
+  <link rel="stylesheet" href="css/admin.css">
+
+  <script>
+    // CEK APAKAH USER ADMIN? (PASTIIN DARI LOGIN)
+    const isAdmin = localStorage.getItem('is_admin');
+    if (!isAdmin || isAdmin !== 'true') {
+      alert('Akses dilarang! Kamu bukan admin.');
+      window.location.href = 'index.html';
+    }
+  </script>
+</head>
+
+<body>
+
+  <div class="admin-container">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, Admin!</p>
+
+    <div class="tabs">
+      <button onclick="showTab('soal')">Kelola Soal</button>
+      <button onclick="showTab('user')">Kelola User</button>
+    </div>
+
+    <!-- Soal Section -->
+    <div id="soal-tab" class="tab-content">
+      <h2>Daftar Soal</h2>
+      <button onclick="loadSoal()">Refresh Soal</button>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pertanyaan</th>
+            <th>Tingkat</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="soal-list"></tbody>
+      </table>
+
+      <h3>Tambah Soal Baru</h3>
+      <input type="text" id="pertanyaan" placeholder="Pertanyaan">
+      <input type="text" id="opsi_a" placeholder="Opsi A">
+      <input type="text" id="opsi_b" placeholder="Opsi B">
+      <input type="text" id="opsi_c" placeholder="Opsi C">
+      <input type="text" id="jawaban_benar" placeholder="Jawaban Benar (A/B/C)">
+      <select id="tingkat">
+        <option value="pemula">Pemula</option>
+        <option value="mudah">Mudah</option>
+        <option value="sedang">Sedang</option>
+        <option value="sulit">Sulit</option>
+      </select>
+      <button onclick="tambahSoal()">Tambah Soal</button>
+    </div>
+
+    <!-- User Section -->
+    <div id="user-tab" class="tab-content" style="display: none;">
+      <h2>Daftar User</h2>
+      <button onclick="loadUsers()">Refresh User</button>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody id="user-list"></tbody>
+      </table>
+    </div>
+
+    <button onclick="logoutAdmin()" class="logout-btn">Logout</button>
+
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    function showTab(tab) {
+      document.getElementById('soal-tab').style.display = tab === 'soal' ? 'block' : 'none';
+      document.getElementById('user-tab').style.display = tab === 'user' ? 'block' : 'none';
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('is_admin');
+      alert('Berhasil logout admin!');
+      window.location.href = 'index.html';
+    }
+
+    // Default tab
+    showTab('soal');
+  </script>
+</body>
+
+</html>
