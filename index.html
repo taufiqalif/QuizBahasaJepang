@@ -10,14 +10,22 @@
 <body>
   <div class="login-container">
     <h1>Login ke Quiz Jepang</h1>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+
+    <!-- Form login -->
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+
     <p><a href="register.html">Belum punya akun? Daftar!</a></p>
   </div>
 
   <script>
-    async function login() {
+    // Tangkap event submit form
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
 
@@ -27,27 +35,36 @@
       }
 
       try {
-        const res = await fetch('api/login.php', {
+        const response = await fetch('api/login.php', {  // Pastikan file PHP lo di folder 'api'
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({ username, password })
         });
 
-        const result = await res.json();
+        const result = await response.json();
 
-        if (result.message) {
+        if (result.error) {
+          alert(result.error);
+        } else {
           alert(result.message);
           localStorage.setItem('username', username);
-          window.location.href = 'game.html';
-        } else {
-          alert(result.error || 'Login gagal!');
+          localStorage.setItem('role', result.role); // Simpan role
+          localStorage.setItem('is_admin', result.role === 'admin' ? 'true' : 'false'); // Buat kompatibel sama admin.html
+
+          // Redirect otomatis dari backend kalau mau
+          window.location.href = result.redirect;
         }
+
+
       } catch (error) {
         console.error('Error:', error);
         alert('Terjadi kesalahan, coba lagi nanti.');
       }
-    }
+    });
   </script>
+
 </body>
 
 </html>

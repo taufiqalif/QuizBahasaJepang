@@ -12,7 +12,6 @@ if (!$username || !$password) {
     exit;
 }
 
-// Gunakan prepared statement (lebih aman)
 $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -21,15 +20,17 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if ($user && password_verify($password, $user['password'])) {
-    // Simpan di session jika perlu
     $_SESSION['username'] = $username;
-    $_SESSION['role'] = $user['role']; // Simpan role juga
+    $_SESSION['role'] = $user['role'];
 
-    // Kirim ke frontend username & role
+    // Balikin URL redirect di responsenya!
+    $redirectUrl = ($user['role'] == 'admin') ? 'admin.html' : 'game.html';
+
     echo json_encode([
         'username' => $username,
-        'role' => $user['role'],   // admin / user
-        'message' => 'Login berhasil!'
+        'role' => $user['role'],
+        'message' => 'Login berhasil!',
+        'redirect' => $redirectUrl
     ]);
 } else {
     echo json_encode(['error' => 'Username atau password salah!']);
