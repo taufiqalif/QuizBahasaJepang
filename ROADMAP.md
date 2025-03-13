@@ -29,6 +29,18 @@
 
 ---
 
+### Catatan
+
+mport File `sql/soal.sql` Setelah Kosongin
+Lewat Terminal XAMPP (CMD Windows):
+Masuk ke folder project kamu:
+
+    cd C:\xampp\htdocs\QuizBahasaJepang
+
+Jalankan perintah import:
+
+    mysql -u root -p quiz_jepang < sql/soal.sql
+
 ## ✅ DATABASE SEKARANG
 
 #### **users**

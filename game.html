@@ -42,9 +42,20 @@
       <!-- Leaderboard Section -->
       <div class="leaderboard-section">
         <h2>Leaderboard</h2>
-        <ul id="leaderboard">
+        <table class="tables">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th onclick="setUserSort('username')">Nama</th>
+              <th onclick="setUserSort('skor')">Skor</th>
+              <th onclick="setUserSort('rank')">Rank</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard"></tbody>
+        </table>
+        <!-- <ul id="leaderboard">
           <li>Belum ada skor!</li>
-        </ul>
+        </ul> -->
       </div>
     </div>
 

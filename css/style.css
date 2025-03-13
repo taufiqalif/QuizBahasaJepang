@@ -212,6 +212,23 @@ body {
   color: #ff9800;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+table th, table td {
+  border: 1px solid #333;
+  padding: 12px;
+  text-align: center;
+}
+
+table th {
+  cursor: pointer;
+  background-color: #252525;
+}
+
 #leaderboard {
   background-color: #333;
   padding: 10px;

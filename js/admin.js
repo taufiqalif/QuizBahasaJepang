@@ -56,8 +56,8 @@ function displaySoal() {
         <td>${soal.pertanyaan}</td>
         <td>${soal.tingkat}</td>
         <td>
-          <button onclick="editSoal(${soal.id})">Edit</button>
-          <button onclick="hapusSoal(${soal.id})">Hapus</button>
+          <button class="edit-btn" onclick="editSoal(${soal.id})">Edit</button>
+          <button class="delete-btn" onclick="hapusSoal(${soal.id})">Hapus</button>
         </td>
       </tr>
     `;
@@ -213,6 +213,27 @@ function logoutAdmin() {
   alert('Berhasil logout admin!');
   window.location.href = 'index.html';
 }
+
+
+// ... kode lain tetap seperti sebelumnya ...
+
+// =======================
+// Tabs switching
+// =======================
+function showTab(tab) {
+  document.getElementById('soal-tab').style.display = 'none';
+  document.getElementById('tambah-soal-tab').style.display = 'none';
+  document.getElementById('user-tab').style.display = 'none';
+
+  if (tab === 'soal') {
+    document.getElementById('soal-tab').style.display = 'block';
+  } else if (tab === 'tambah-soal') {
+    document.getElementById('tambah-soal-tab').style.display = 'block';
+  } else if (tab === 'user') {
+    document.getElementById('user-tab').style.display = 'block';
+  }
+}
+
 
 // Start
 showTab('soal');

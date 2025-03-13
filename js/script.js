@@ -209,7 +209,12 @@ function loadLeaderboard() {
 
       data.forEach((entry, index) => {
         list.innerHTML += `
-          <li>${index + 1}. ${entry.username} - ${entry.total_skor} pts - Rank: ${entry.rank}</li>
+          <tr>
+            <td>${index + 1}</td> 
+            <td>${entry.username}</td>
+            <td>${entry.total_skor}</td>
+            <td>${entry.rank}</td>
+          </tr>
         `;
       });
     })

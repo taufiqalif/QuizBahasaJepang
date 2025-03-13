@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel - Quiz Jepang</title>
@@ -28,6 +29,7 @@
 
     <div class="tabs">
       <button onclick="showTab('soal')">Kelola Soal</button>
+      <button onclick="showTab('tambah-soal')">Tambah Soal Baru</button>
       <button onclick="showTab('user')">Kelola User</button>
       <button onclick="logoutAdmin()" class="logout-btn">Logout</button>
     </div>
@@ -54,8 +56,12 @@
         <span id="soal-page-info"></span>
         <button onclick="changeSoalPage(1)">Next ➡</button>
       </div>
+    </div>
 
-      <h3>Tambah Soal Baru</h3>
+    <!-- Tambah Soal Section (BARU) -->
+    <div id="tambah-soal-tab" class="tab-content" style="display: none;">
+      <h2>Tambah Soal Baru</h2>
+
       <div class="form-container">
         <input type="text" id="pertanyaan" placeholder="Pertanyaan">
         <input type="text" id="opsi_a" placeholder="Opsi A">
@@ -63,6 +69,7 @@
         <input type="text" id="opsi_c" placeholder="Opsi C">
         <input type="text" id="jawaban_benar" placeholder="Jawaban Benar (A/B/C)">
         <select id="tingkat">
+          <option value="">-- Pilih Tingkat --</option>
           <option value="pemula">Pemula</option>
           <option value="mudah">Mudah</option>
           <option value="sedang">Sedang</option>
@@ -93,7 +100,6 @@
         <span id="user-page-info"></span>
         <button onclick="changeUserPage(1)">Next ➡</button>
       </div>
-
     </div>
 
   </div>
