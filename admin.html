@@ -31,6 +31,7 @@
       <button onclick="showTab('soal')">Kelola Soal</button>
       <button onclick="showTab('tambah-soal')">Tambah Soal Baru</button>
       <button onclick="showTab('user')">Kelola User</button>
+      <button onclick="showTab('leaderbord')">Leaderboard</button>
       <button onclick="logoutAdmin()" class="logout-btn">Logout</button>
     </div>
 
@@ -101,6 +102,25 @@
         <button onclick="changeUserPage(1)">Next ➡</button>
       </div>
     </div>
+
+    <!-- Leaderboard Section -->
+    <div id="leaderbord-tab" class="leaderboard-section" style="display: none;">
+      <h2>Leaderboard</h2>
+      <button class="refresh-btn" onclick="loadLeaderbord()">🔄 Refresh Lerderbord</button>
+
+      <table class="tables">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th onclick="setUserSort('username')">Nama</th>
+            <th onclick="setUserSort('skor')">Skor</th>
+            <th onclick="setUserSort('rank')">Rank</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard"></tbody>
+      </table>
+    </div>
+  </div>
 
   </div>
 

@@ -206,6 +206,39 @@ function setUserSort(field) {
 }
 
 // =======================
+// Load Leaderboard
+// =======================
+function loadLeaderboard() {
+  fetch('api/get_leaderboard.php')
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById('leaderboard');
+      list.innerHTML = '';
+
+      if (!data.length) {
+        list.innerHTML = '<li>Belum ada skor!</li>';
+        return;
+      }
+
+      data.forEach((entry, index) => {
+        list.innerHTML += `
+          <tr>
+            <td>${index + 1}</td> 
+            <td>${entry.username}</td>
+            <td>${entry.total_skor}</td>
+            <td>${entry.rank}</td>
+          </tr>
+        `;
+      });
+    })
+    .catch(err => {
+      console.error('Error load leaderboard:', err);
+      showNotification('Gagal memuat leaderboard!', 'error');
+    });
+}
+
+
+// =======================
 // LOGOUT
 // =======================
 function logoutAdmin() {
@@ -224,6 +257,7 @@ function showTab(tab) {
   document.getElementById('soal-tab').style.display = 'none';
   document.getElementById('tambah-soal-tab').style.display = 'none';
   document.getElementById('user-tab').style.display = 'none';
+  document.getElementById('leaderbord-tab').style.display = 'none';
 
   if (tab === 'soal') {
     document.getElementById('soal-tab').style.display = 'block';
@@ -231,6 +265,8 @@ function showTab(tab) {
     document.getElementById('tambah-soal-tab').style.display = 'block';
   } else if (tab === 'user') {
     document.getElementById('user-tab').style.display = 'block';
+  } else if (tab === 'leaderbord') {
+    document.getElementById('leaderbord-tab').style.display = 'block';
   }
 }
 
@@ -239,3 +275,4 @@ function showTab(tab) {
 showTab('soal');
 loadSoal();
 loadUsers();
+loadLeaderboard();
