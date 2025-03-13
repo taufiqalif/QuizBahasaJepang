@@ -1,11 +1,14 @@
 // =======================
 // Variabel Game
 // =======================
-let score = 0;
-let lives = 3;
+let totalSkor = 0;
+let comboStreak = 0;
+let lives = 5;
 let timer;
 let timeLeft = 10;
 let questionsAnswered = 0;
+let startTime = 0;
+let timerInterval;
 
 // =======================
 // Ambil Username dari localStorage
@@ -19,20 +22,23 @@ if (!username || username.length < 3 || username.length > 20) {
 }
 
 // =======================
-// Fungsi Utama Mulai Game
+// Fungsi Mulai Game
 // =======================
 function startGame() {
-  score = 0;
+  totalSkor = 0;
+  comboStreak = 0;
   lives = 3;
   questionsAnswered = 0;
 
   updateStatus();
+  updateSkorUI();
+
   document.getElementById('start-btn').style.display = 'none';
   loadQuestion();
 }
 
 // =======================
-// Dapatkan Difficulty Berdasarkan Progress
+// Dapatkan Tingkat Kesulitan
 // =======================
 function getDifficultyByProgress() {
   if (questionsAnswered >= 30) return 'sulit';
@@ -42,68 +48,92 @@ function getDifficultyByProgress() {
 }
 
 // =======================
-// Load Pertanyaan dari API
+// Load Pertanyaan
 // =======================
 function loadQuestion() {
   clearInterval(timer);
 
-  const currentDifficulty = getDifficultyByProgress();
-  document.getElementById('difficulty-label').innerText = currentDifficulty.toUpperCase();
+  const difficulty = getDifficultyByProgress();
+  document.getElementById('difficulty-label').innerText = difficulty.toUpperCase();
 
-  fetch(`api/get_soal.php?difficulty=${currentDifficulty}`)
+  fetch(`api/get_soal.php?difficulty=${difficulty}`)
     .then(res => res.json())
     .then(data => {
+      console.log('Data soal:', data);
       if (data.error) {
         showNotification(data.error, 'error');
         return;
       }
 
-      document.getElementById('question').innerText = data.pertanyaan;
-
+      document.getElementById('question').innerText = data.pertanyaan || 'Pertanyaan tidak tersedia';
       const optionsDiv = document.getElementById('options');
       optionsDiv.innerHTML = '';
 
       ['opsi_a', 'opsi_b', 'opsi_c'].forEach(key => {
-        const btn = document.createElement('button');
-        btn.innerText = data[key];
-        btn.classList.add('option-btn');
-        btn.onclick = () => checkAnswer(key.slice(-1).toUpperCase(), data.jawaban_benar);
-        optionsDiv.appendChild(btn);
+        if (data[key]) {
+          const btn = document.createElement('button');
+          btn.innerText = data[key];
+          btn.classList.add('option-btn');
+          btn.onclick = () => jawabSoal(key.slice(-1).toUpperCase(), data.jawaban_benar);
+          optionsDiv.appendChild(btn);
+        }
       });
 
+      mulaiSoal();
       startTimer();
     })
     .catch(err => {
-      console.error('Error load soal:', err);
+      console.error('Error:', err);
       showNotification('Gagal mengambil pertanyaan!', 'error');
     });
 }
 
 // =======================
-// Cek Jawaban
+// Jawab Soal + Combo + Skor + Waktu
 // =======================
-function checkAnswer(selected, correct) {
+function jawabSoal(jawabanUser, jawabanBenar) {
   clearInterval(timer);
+  clearInterval(timerInterval);
   questionsAnswered++;
 
-  if (selected === correct.toUpperCase()) {
-    score += getScoreByDifficulty();
+  const endTime = new Date().getTime();
+  const waktuJawab = (endTime - startTime) / 1000;
+
+  let bonusWaktu = 0;
+
+  if (jawabanUser === jawabanBenar.toUpperCase()) {
+    comboStreak++;
+
+    let bonusCombo = (comboStreak - 1) * 5;
+
+    if (waktuJawab < 5) {
+      bonusWaktu = 10;
+    } else if (waktuJawab < 10) {
+      bonusWaktu = 5;
+    }
+
+    let skorTambah = 10 + bonusCombo + bonusWaktu;
+    totalSkor += skorTambah;
+
+    showNotification(
+      `Benar! +${skorTambah} poin (Combo x${comboStreak}, ${waktuJawab.toFixed(1)} detik) 🔥`,
+      'success'
+    );
+
     playSound('correct');
-    showNotification('Benar!', 'success');
   } else {
+    comboStreak = 0;
+    totalSkor -= 5;
+    if (totalSkor < 0) totalSkor = 0;
+
     lives--;
+    showNotification(`Salah! -5 poin ❌. Jawaban: ${jawabanBenar}`, 'error');
+
     playSound('wrong');
-    showNotification(`Salah! Jawaban: ${correct}`, 'error');
   }
 
-  afterAnswerCheck();
-}
-
-// =======================
-// Proses Setelah Jawaban Dicek
-// =======================
-function afterAnswerCheck() {
   updateStatus();
+  updateSkorUI();
 
   if (lives <= 0) {
     playSound('gameover');
@@ -114,7 +144,21 @@ function afterAnswerCheck() {
 }
 
 // =======================
-// Timer Berdasarkan Difficulty
+// Timer Real-Time Buat Waktu Jawab
+// =======================
+function mulaiSoal() {
+  startTime = new Date().getTime();
+
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    const now = new Date().getTime();
+    const elapsed = ((now - startTime) / 1000).toFixed(1);
+    document.getElementById('timer').innerText = `Waktu Jawab: ${elapsed} detik ⏱️`;
+  }, 100);
+}
+
+// =======================
+// Timer Hitung Mundur
 // =======================
 function getTimeByDifficulty() {
   const diff = getDifficultyByProgress();
@@ -127,9 +171,6 @@ function getTimeByDifficulty() {
   }
 }
 
-// =======================
-// Timer
-// =======================
 function startTimer() {
   timeLeft = getTimeByDifficulty();
   updateTimerDisplay();
@@ -140,9 +181,14 @@ function startTimer() {
 
     if (timeLeft <= 0) {
       clearInterval(timer);
+      clearInterval(timerInterval);
+
       lives--;
+      comboStreak = 0;
       showNotification('Waktu habis! Nyawa berkurang.', 'error');
+
       updateStatus();
+      updateSkorUI();
 
       if (lives <= 0) {
         playSound('gameover');
@@ -158,18 +204,23 @@ function startTimer() {
 // Game Over
 // =======================
 function gameOver() {
-  showNotification(`Game Over! Skor kamu: ${score}`, 'error');
+  clearInterval(timerInterval);
+  clearInterval(timer);
+
+  showNotification(`Game Over! Skor kamu: ${totalSkor}`, 'error');
 
   const level = getDifficultyByProgress();
-  submitScore(username, score, level);
+  submitScore(username, totalSkor, level);
 
   document.getElementById('start-btn').style.display = 'block';
-  document.getElementById('question').innerText = 'Klik tombol untuk mulai!';
+  document.getElementById('question').innerText = 'Klik tombol mulai untuk bermain!';
   document.getElementById('options').innerHTML = '';
+  document.getElementById('timer').innerText = '';
+  document.getElementById('difficulty-label').innerText = '';
 }
 
 // =======================
-// Submit Skor ke Server
+// Submit Skor
 // =======================
 function submitScore(username, skor, level) {
   fetch('api/save_score.php', {
@@ -203,7 +254,7 @@ function loadLeaderboard() {
       list.innerHTML = '';
 
       if (!data.length) {
-        list.innerHTML = '<li>Belum ada skor!</li>';
+        list.innerHTML = '<tr><td colspan="4">Belum ada skor!</td></tr>';
         return;
       }
 
@@ -219,13 +270,13 @@ function loadLeaderboard() {
       });
     })
     .catch(err => {
-      console.error('Error load leaderboard:', err);
+      console.error(err);
       showNotification('Gagal memuat leaderboard!', 'error');
     });
 }
 
 // =======================
-// Tampilkan Notifikasi
+// Helper Functions
 // =======================
 function showNotification(message, type = 'info') {
   const notif = document.getElementById('notification');
@@ -237,26 +288,21 @@ function showNotification(message, type = 'info') {
   }, 2000);
 }
 
-// =======================
-// Update Status UI
-// =======================
 function updateStatus() {
-  document.getElementById('score').innerText = score;
   document.getElementById('lives').innerText = lives;
 }
 
-// =======================
-// Update Timer UI
-// =======================
+function updateSkorUI() {
+  document.getElementById('skor').innerText = `Skor: ${totalSkor} ⭐`;
+  document.getElementById('combo').innerText = `Combo Streak: ${comboStreak} 🔥`;
+}
+
 function updateTimerDisplay() {
   const timeDisplay = document.getElementById('time');
   timeDisplay.innerText = timeLeft;
   timeDisplay.style.color = (timeLeft <= 3) ? 'red' : '#fff';
 }
 
-// =======================
-// Main Fungsi Sound
-// =======================
 function playSound(type) {
   const sound = document.getElementById(`sound-${type}`);
   if (sound) {
@@ -265,36 +311,14 @@ function playSound(type) {
   }
 }
 
-// =======================
-// Skor Berdasarkan Difficulty
-// =======================
-function getScoreByDifficulty() {
-  const diff = getDifficultyByProgress();
-  switch (diff) {
-    case 'pemula': return 10;
-    case 'mudah': return 20;
-    case 'sedang': return 30;
-    case 'sulit': return 40;
-    default: return 10;
-  }
-}
-
-// =======================
-// Auto Load Leaderboard Saat Awal
-// =======================
-window.onload = () => {
-  loadLeaderboard();
-
-  if (!username || username.length < 3) {
-    showNotification('Username tidak valid', 'error');
-    setTimeout(() => window.location.href = 'index.html', 2000);
-  }
-};
-
-// =======================
-// Logout
-// =======================
 function logout() {
   localStorage.removeItem('username');
   window.location.href = 'index.html';
 }
+
+// =======================
+// Load Leaderboard on Page Load
+// =======================
+window.onload = () => {
+  loadLeaderboard();
+};
