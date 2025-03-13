@@ -8,7 +8,7 @@ $query = "
     SELECT 
         l.username,
         SUM(l.skor) AS total_skor,
-        u.rank
+        u.rank, u.medali
     FROM leaderboard l
     JOIN users u ON l.username = u.username
     GROUP BY l.username
@@ -25,7 +25,8 @@ if ($result && $result->num_rows > 0) {
         $leaderboard[] = [
             'username' => $row['username'],
             'total_skor' => (int)$row['total_skor'],
-            'rank' => $row['rank']
+            'rank' => $row['rank'],
+            'medali' => $row['medali']
         ];
     }
 

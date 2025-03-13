@@ -3,7 +3,7 @@
 // =======================
 let totalSkor = 0;
 let comboStreak = 0;
-let lives = 5;
+let lives = 3;
 let timer;
 let timeLeft = 10;
 let questionsAnswered = 0;
@@ -265,6 +265,7 @@ function loadLeaderboard() {
             <td>${entry.username}</td>
             <td>${entry.total_skor}</td>
             <td>${entry.rank}</td>
+            <td>${entry.medali}</td>
           </tr>
         `;
       });

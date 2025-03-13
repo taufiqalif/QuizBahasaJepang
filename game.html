@@ -29,10 +29,9 @@
         <div id="status">
           <p>Nyawa: <span id="lives">3</span></p>
           <p>Timer: <span id="time">10</span></p>
-          <div id="skor">Skor: 0 ⭐</div>
-          <div id="combo">Combo Streak: 0 🔥</div>
-          <div id="timer">Waktu Jawab: 0.0 detik ⏱️</div>
-
+          <p id="skor">Skor: 0 ⭐</p>
+          <p id="combo">Combo Streak: 0 🔥</p>
+          <p id="timer">Waktu Jawab: 0.0 detik ⏱️</p>
           <p>Level: <span id="difficulty-label">PEMULA</span></p>
         </div>
 
@@ -52,6 +51,7 @@
               <th onclick="setUserSort('username')">Nama</th>
               <th onclick="setUserSort('skor')">Skor</th>
               <th onclick="setUserSort('rank')">Rank</th>
+              <th onclick="setUserSort('medali')">Medali</th>
             </tr>
           </thead>
           <tbody id="leaderboard"></tbody>
